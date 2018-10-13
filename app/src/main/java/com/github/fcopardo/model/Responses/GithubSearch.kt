@@ -13,5 +13,5 @@ class GithubSearch {
     var incompleteResults: Boolean? = null
     @SerializedName("items")
     @Expose
-    var items: List<GithubRepository>? = null
+    var items: ArrayList<GithubRepository>? = null
 }
