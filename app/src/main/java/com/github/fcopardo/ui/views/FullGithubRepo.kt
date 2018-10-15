@@ -2,7 +2,6 @@ package com.github.fcopardo.ui.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
 import com.github.fcopardo.R
@@ -48,6 +47,13 @@ class FullGithubRepo : AbstractGithubRepo {
             else -> {
                 getData().license?.name
             }
+        }
+    }
+
+    override fun setActions(repositoryCellActions: AbstractGithubRepo.RepositoryCellActions){
+        super.setActions(repositoryCellActions)
+        setOnClickListener {
+            repositoryCellActions.onClickElement(getData())
         }
     }
 }

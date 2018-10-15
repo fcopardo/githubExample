@@ -13,7 +13,7 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var myUI : UI<GithubSearch>
+    lateinit var myUI : MainUI<GithubSearch>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +32,14 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onBackPressed() {
+        if(myUI.shouldLeave()){
+            super.onBackPressed()
+        }else{
+            myUI.switchContents()
+        }
     }
 
 

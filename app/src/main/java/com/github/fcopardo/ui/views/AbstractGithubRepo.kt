@@ -9,7 +9,12 @@ import com.github.fcopardo.ui.UI
 
 abstract class AbstractGithubRepo : CardView, UI<GithubRepository> {
 
+    interface RepositoryCellActions {
+        fun onClickElement(payload : GithubRepository)
+    }
+
     private lateinit var data : GithubRepository
+    private var repositoryCellActions : AbstractGithubRepo.RepositoryCellActions? = null
 
     constructor(context : Context) : super(context){
         init()
@@ -28,6 +33,10 @@ abstract class AbstractGithubRepo : CardView, UI<GithubRepository> {
         useCompatPadding = true
         radius = 8F
         setContent()
+    }
+
+    open fun setActions(repositoryCellActions: AbstractGithubRepo.RepositoryCellActions){
+        this.repositoryCellActions = repositoryCellActions
     }
 
     override fun setData(data : GithubRepository){

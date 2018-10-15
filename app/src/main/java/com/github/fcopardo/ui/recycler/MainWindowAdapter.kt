@@ -1,4 +1,4 @@
-package com.github.fcopardo.ui
+package com.github.fcopardo.ui.recycler
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -11,6 +11,7 @@ import com.github.fcopardo.ui.views.GenericViewHolder
 class MainWindowAdapter : RecyclerView.Adapter<GenericViewHolder<AbstractGithubRepo, GithubRepository>>() {
 
     private var elements : ArrayList<GithubRepository> = ArrayList()
+    private var cellActions : AbstractGithubRepo.RepositoryCellActions? = null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): GenericViewHolder<AbstractGithubRepo, GithubRepository> {
         var view : AbstractGithubRepo = createView(p0.context)
@@ -31,8 +32,13 @@ class MainWindowAdapter : RecyclerView.Adapter<GenericViewHolder<AbstractGithubR
         return this
     }
 
+    fun setListener(listener : AbstractGithubRepo.RepositoryCellActions){
+        cellActions = listener
+    }
+
     override fun onBindViewHolder(p0: GenericViewHolder<AbstractGithubRepo, GithubRepository>, p1: Int) {
         p0.resetData(elements[p1])
+        p0.getView().setActions(cellActions!!)
     }
 
     private fun createView(context : Context) : AbstractGithubRepo{
