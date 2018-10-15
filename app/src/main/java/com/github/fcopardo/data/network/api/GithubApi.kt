@@ -1,6 +1,6 @@
-package com.github.fcopardo.network.api
+package com.github.fcopardo.data.network.api
 
-import com.github.fcopardo.model.Responses.GithubSearch
+import com.github.fcopardo.model.responses.GithubSearch
 import retrofit2.Call
 import retrofit2.http.GET
 

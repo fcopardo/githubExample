@@ -1,25 +1,44 @@
 package com.github.fcopardo.ui.views
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.support.constraint.ConstraintLayout
+import android.support.v4.view.AsyncLayoutInflater
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
-import android.widget.LinearLayout
-import com.github.fcopardo.model.Responses.GithubRepository
-import com.github.fcopardo.model.Responses.GithubSearch
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ProgressBar
+import android.widget.TextView
+import com.github.fcopardo.R
+import com.github.fcopardo.model.ui.UIRepo
+import com.github.fcopardo.model.ui.UISearch
 import com.github.fcopardo.ui.MainUI
 import com.github.fcopardo.ui.recycler.MainWindowAdapter
 
-class MainWindowUI : LinearLayout, MainUI<GithubSearch> {
+
+/**
+ * Main window of the app.
+ */
+class MainWindowUI : FrameLayout, MainUI<UISearch> {
 
     private lateinit var mainContent : RecyclerView
     private lateinit var adapter : MainWindowAdapter
-    private lateinit var detailWindow : DetailWindowUI
-    private var data : GithubSearch? = null
+    private var data : UISearch? = null
+
+    private lateinit var detail : ConstraintLayout
+    private lateinit var name : TextView
+    private lateinit var description : TextView
+    private lateinit var readme : TextView
+    private lateinit var toRepository : Button
+    private lateinit var progressBar : ProgressBar
+
+    private var animationLength = 0L
 
     constructor(context : Context) : super(context){
         init()
@@ -34,10 +53,23 @@ class MainWindowUI : LinearLayout, MainUI<GithubSearch> {
     }
 
     private fun init(){
-        orientation = LinearLayout.VERTICAL
-        gravity = Gravity.CENTER
+
+        animationLength = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+
+        val inflater = AsyncLayoutInflater(context)
+        inflater.inflate(R.layout.repo_detail, this) { view, resid, parent ->
+            detail = view.findViewById(R.id.root_detail)
+            name = view.findViewById(R.id.txt_project_name)
+            description = view.findViewById(R.id.txt_description)
+            readme = view.findViewById(R.id.txt_readme)
+            toRepository = view.findViewById(R.id.btb_go)
+
+            detail.visibility = View.GONE
+            addView(detail)
+        }
+
         mainContent = RecyclerView(context)
-        mainContent.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        mainContent.layoutParams = FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
         addView(mainContent)
 
         var layoutManager = LinearLayoutManager(context)
@@ -45,25 +77,12 @@ class MainWindowUI : LinearLayout, MainUI<GithubSearch> {
         mainContent.layoutManager = layoutManager
         adapter = MainWindowAdapter()
         mainContent.adapter = adapter
-        detailWindow = DetailWindowUI(context)
-        detailWindow.layoutParams = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        addView(detailWindow)
-        detailWindow.visibility = View.GONE
-        detailWindow.setBehavior(object : DetailWindowUI.Behavior{
-            override fun openRepository(url: String) {
-                var i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                context.startActivity(i)
-            }
-
-        })
 
         setCellListener(object : AbstractGithubRepo.RepositoryCellActions{
-            override fun onClickElement(payload: GithubRepository) {
+            override fun onClickElement(payload: UIRepo) {
                 switchContents()
-                detailWindow.setData(payload)
+                setDetail(payload)
             }
-
         })
     }
 
@@ -71,13 +90,31 @@ class MainWindowUI : LinearLayout, MainUI<GithubSearch> {
         adapter.setListener(listener)
     }
 
+    fun setDetail(data: UIRepo) {
+        name.text = data.projectName
+        description.text = data.description
+        //readme.text = data
+        toRepository.setOnClickListener {
+            var i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(data.url)
+            context.startActivity(i)
+        }
+    }
+
+    override fun setData(data: UISearch) {
+        this.data = data
+        adapter.setElements(this.data?.items!!, true)
+    }
+
+    override fun asView(): View {
+        return this
+    }
+
     override fun switchContents(){
         if(mainContent.visibility!=GONE){
-            detailWindow.visibility = View.VISIBLE
-            mainContent.visibility = GONE
+            animate(detail, mainContent)
         }else{
-            detailWindow.visibility = View.GONE
-            mainContent.visibility = View.VISIBLE
+            animate(mainContent, detail)
         }
     }
 
@@ -85,13 +122,22 @@ class MainWindowUI : LinearLayout, MainUI<GithubSearch> {
         return mainContent.visibility== View.VISIBLE
     }
 
-    override fun setData(data: GithubSearch) {
-        this.data = data
-        adapter.setElements(this.data?.items!!, true)
-    }
+    private fun animate(toShow : View, toHide : View) {
 
-    override fun asView(): View {
-        return this
+        toShow.alpha = 0f
+        toShow.visibility = View.VISIBLE
+        toShow.animate()
+                .alpha(1f)
+                .setDuration(animationLength)
+                .setListener(null)
+        toHide.animate()
+                .alpha(0f)
+                .setDuration(animationLength)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        toHide.visibility = View.GONE
+                    }
+                })
     }
 
 }

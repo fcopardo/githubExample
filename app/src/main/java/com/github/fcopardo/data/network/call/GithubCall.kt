@@ -1,7 +1,7 @@
-package com.github.fcopardo.network.call
+package com.github.fcopardo.data.network.call
 
-import com.github.fcopardo.network.BaseRetrofitBuilder
-import com.github.fcopardo.network.api.GithubApi
+import com.github.fcopardo.data.network.BaseRetrofitBuilder
+import com.github.fcopardo.data.network.api.GithubApi
 
 class GithubCall {
 

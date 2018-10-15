@@ -1,4 +1,4 @@
-package com.github.fcopardo.model.Responses
+package com.github.fcopardo.model.responses
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

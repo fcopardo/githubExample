@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import com.github.fcopardo.R
 
+/**
+ * Specific cell representing a repository
+ */
 class FullGithubRepo : AbstractGithubRepo {
 
     private lateinit var projectName : TextView
@@ -32,22 +35,11 @@ class FullGithubRepo : AbstractGithubRepo {
 
     override fun resetViews() {
 
-        projectName.text = getData().name
-        stars.text = getData().stargazersCount.toString()
+        projectName.text = getData().projectName
+        stars.text = getData().stars
         description.text = getData().description
-        language.text = when{
-            getData().language?.trim() == "" -> "Misc"
-            getData().language == null -> "Misc"
-            else -> {
-                getData().language!!
-            }
-        }
-        license.text = when{
-            getData().license?.name?.trim() == "" || getData().license?.name?.trim() == null ->"Other"
-            else -> {
-                getData().license?.name
-            }
-        }
+        language.text = getData().language!!
+        license.text = getData().license
     }
 
     override fun setActions(repositoryCellActions: AbstractGithubRepo.RepositoryCellActions){
