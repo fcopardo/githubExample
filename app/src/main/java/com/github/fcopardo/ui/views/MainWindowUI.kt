@@ -13,7 +13,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.fcopardo.R
 import com.github.fcopardo.model.ui.UIRepo
@@ -36,7 +35,6 @@ class MainWindowUI : FrameLayout, MainUI<UISearch> {
     private lateinit var description : TextView
     private lateinit var readme : TextView
     private lateinit var toRepository : Button
-    private lateinit var progressBar : ProgressBar
 
     private var animationLength = 0L
 
